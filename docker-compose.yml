@@ -1,0 +1,37 @@
+version: "3.9"
+
+services:
+  postgres:
+    image: postgres:15
+    container_name: meu-postgres
+    environment:
+      POSTGRES_USER: eduardo
+      POSTGRES_PASSWORD: 123456
+      POSTGRES_DB: meubanco
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    networks:
+      - school-network
+
+  app:
+    build: .
+    container_name: school-app
+    depends_on:
+      - postgres
+    ports:
+      - "8080:8080"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/meubanco
+      SPRING_DATASOURCE_USERNAME: eduardo
+      SPRING_DATASOURCE_PASSWORD: 123456
+    networks:
+      - school-network
+
+volumes:
+  pgdata:
+
+networks:
+  school-network:
+    driver: bridge
